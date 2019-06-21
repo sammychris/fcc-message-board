@@ -1,15 +1,20 @@
 'use strict';
 
+require('dotenv').config();
 var express     = require('express');
 var bodyParser  = require('body-parser');
 var expect      = require('chai').expect;
 var cors        = require('cors');
+const mongoose  = require('mongoose');
+
 
 var apiRoutes         = require('./routes/api.js');
 var fccTestingRoutes  = require('./routes/fcctesting.js');
 var runner            = require('./test-runner');
 
 var app = express();
+
+mongoose.connect(process.env.DB, {useNewUrlParser: true})
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -36,6 +41,14 @@ app.route('/')
 
 //For FCC testing purposes
 fccTestingRoutes(app);
+
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  // we're connected!
+  console.log('connected! to DB')
+});
 
 //Routing for API 
 apiRoutes(app);
