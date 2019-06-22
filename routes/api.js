@@ -48,9 +48,9 @@ module.exports = function (app) {
 
   	.get((req, res) => {
   		let { board } = req.params;
-  		Board(board).find({}, (err, result) => {
-  			res.json(result);
-  		})
+  		Board(board).find({}).limit(10).exec((err, result) => {
+        res.json(result);
+      });
   	})
 
   	.delete((req, res) => {
@@ -67,13 +67,15 @@ module.exports = function (app) {
   	})
 
 	.put((req, res) => {
-		let { thread_id } = req.body;
+		let { thread_id, report_id } = req.body;
 		let { board } = req.params;
-		Board(board).findById(thread_id, (err, result) => {
+    let _id = thread_id || report_id;
+
+		Board(board).findById(_id, (err, result) => {
 			if(!result) return res.send('id not valid');
 			result.reported = true;
 			result.save(() => {
-				res.send('success');
+				res.send('reported');
 			})
 		});
 	})
