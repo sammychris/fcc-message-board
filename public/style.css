@@ -95,6 +95,7 @@ h1 {
   max-width: 900px;
   margin: auto;
   padding: 50px 20px;
+  font-size: 16px;
 }
 
 #submitNewThread {
@@ -195,5 +196,15 @@ h1 {
     border: 0px solid;
     padding: 5px 5px;
     max-width: 400px;
+  }
+
+  #userstories{
+    font-size: 14px;
+  }
+
+  img {
+    max-width: 100%;
+    display: block;
+    height: auto;
   }
 }
