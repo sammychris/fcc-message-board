@@ -22,7 +22,7 @@ suite('Functional Tests', function() {
 
     suite('POST', function() {
 
-        test('Post messag thread_id (for delete purposes)', function(done){
+        test('Post message thread_id (for delete purposes)', function(done){
             chai.request(server)
                 .post('/api/threads/testBoard')
                 .send({
@@ -100,7 +100,7 @@ suite('Functional Tests', function() {
             .send({ thread_id })
             .end((err, res) => {
                 assert.equal(res.status, 200);
-                assert.equal(res.text, 'success');
+                assert.equal(res.text, 'reported');
                 done();
             })
       });
