@@ -5,6 +5,8 @@
 
 body {
   padding: 10px;
+  font-family: sans-serif;
+  padding:0; 
 }
 
 .replies {
@@ -31,6 +33,142 @@ body {
   font-size: 10.5px;
 }
 
-#submitNewThread {
-  margin: 50px;
+form input[type=submit] {
+  background: #3f51b5d1;
+  color:#fff;
+  cursor: pointer;
+  border: 0;
+  padding: 2px;
 }
+
+#testui {
+  width: 80%;
+  max-width: 1000px;
+  margin: auto;
+  background: #e8e8e8;
+  padding: 10px 20px; 
+}
+
+h2, h3 {
+  color: #3f51b5d1;
+  font-size: 16px;
+  padding-top: 20px;
+  padding-bottom: 10px; 
+}
+h1 {
+  text-align: center;
+  padding: 30px;
+  font-size: 25px;
+}
+.all-threads {
+  display: flex;
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 30px;
+}
+
+.thread-form {
+  width: 33.4%;
+  text-align: center;
+}
+
+.thread-form h4 {
+  font-size: 12px;
+  color: #535454;
+}
+
+.thread-form form input, textarea {
+  width: 90%;
+  margin-top: 5px;
+  border: 0px solid;
+  padding: 5px 5px;
+  max-width: 250px;
+}
+
+.thread-form form textarea {
+  height: 70px;
+  resize: none;
+}
+
+#userstories {
+  width: 70%;
+  max-width: 900px;
+  margin: auto;
+  padding: 50px 20px;
+}
+
+#submitNewThread {
+  width: auto;
+  text-align: center;
+}
+
+#submitNewThread #newThread textarea {
+  max-width: 549px;
+  height: 156px;
+}
+
+#submitNewThread #newThread input[type=text] {
+  max-width: 549px;
+}
+
+#boardDisplay {
+  width: 80%;
+  max-width: 1000px;
+  margin: auto;
+  padding: 50px 0px; 
+}
+
+#boardDisplay .thread .main {
+  width: 80%;
+  max-width: 1000px;
+  margin: 5px auto;
+  background: #e8e8e8;
+  padding: 10px 20px 0; 
+  border: 1px solid;
+}
+
+#boardDisplay .thread .main h3 {
+  font-weight: bolder;
+  font-size: 18px;
+  color: #3f51b5;
+}
+
+#boardDisplay .thread .main form input{
+  border: 0;
+  padding: 3px; 
+}
+
+#boardDisplay .thread .replies .newReply{
+  width: 80%;
+  max-width: 1000px;
+  margin: 5px auto;
+  background: #e8e8e8;
+  padding: 5px 20px; 
+  display: flex;
+  justify-content: center;
+}
+
+#boardDisplay .thread .replies .newReply #newReply {
+  text-align: center;
+}
+
+#boardDisplay .thread .replies .newReply #newReply input {
+  margin-top: 5px;
+  border: 0px solid;
+  padding: 5px 5px;
+}
+
+#boardDisplay .thread .replies .newReply #newReply textarea {
+  resize: none;
+  max-width: 300px;
+}
+
+
+#boardDisplay .thread .replies .reply{
+  width: 80%;
+  max-width: 1000px;
+  margin: 0 auto 10px;
+  background: #e8e8e8;
+  padding: 10px 20px; 
+}
+
