@@ -21,27 +21,11 @@ suite('Functional Tests', function() {
   suite('API ROUTING FOR /api/threads/:board', function() {
 
     suite('POST', function() {
-        test('Post incomplete fields', function(done){
-            chai.request(server)
-                .post('/api/threads/:board')
-                .send({
-                    board: '',
-                    text : 'Housing',
-                    delete_password: 'password'
-                })
-                .end((err, res) => {
-                    assert.equal(res.status, 200);
-                    assert.equal(res.text, 'all fields are required');
-                    done();
-                });
-        });
-        
 
-        test('Every field filled in', function(done){
+        test('Post messag thread_id (for delete purposes)', function(done){
             chai.request(server)
-                .post('/api/threads/:board')
+                .post('/api/threads/testBoard')
                 .send({
-                    board: 'Mark',
                     text : 'Housing',
                     delete_password: 'password'
                 })
@@ -52,11 +36,10 @@ suite('Functional Tests', function() {
                 });
         });
 
-        test('Every field filled in. (Testing)', function(done){
+        test('Post message thread_id2 (for update purposes)', function(done){
             chai.request(server)
-                .post('/api/threads/:board')
+                .post('/api/threads/testBoard')
                 .send({
-                    board: 'Mark',
                     text : 'Housing',
                     delete_password: 'password'
                 })
@@ -71,9 +54,9 @@ suite('Functional Tests', function() {
     
     suite('GET', function() {
 
-        test('Get all the general thread data', function(done){
+        test('Get most recent 10 threads with most recent 3 replies each', function(done){
             chai.request(server)
-                .get('/api/threads/general')
+                .get('/api/threads/testBoard')
                 .end((err, res) => {
                     assert.equal(res.status, 200);
                     assert.isArray(res.body);
@@ -81,43 +64,17 @@ suite('Functional Tests', function() {
                     assert.property(res.body[0], 'replies');
                     assert.property(res.body[0], 'replycount');
                     assert.property(res.body[0], '_id')
-
-                    thread_id = res.body[0]._id;
-
-                    assert.property(res.body[0], 'board');
                     assert.property(res.body[0], 'text');
                     assert.property(res.body[0], 'delete_password');
                     assert.property(res.body[0], 'created_on');
                     assert.property(res.body[0], 'bumped_on');
-                    done();
-                });
-        });
-
-        test('Get threads data with a particular board name',function(done) {
-            chai.request(server)
-                .get('/api/threads/Mark')
-                .end((err, res) => {
-                    assert.equal(res.status, 200);
-                    assert.isArray(res.body);
-                    assert.property(res.body[1], 'reported');
-                    assert.property(res.body[1], 'replies');
-                    assert.property(res.body[1], 'replycount');
-                    assert.property(res.body[1], '_id')
-
+                    assert.isBoolean(res.body[0].reported);
+                    assert.isArray(res.body[0].replies);
+                    assert.equal(res.body[0].replycount, 0);
+                    assert.equal(res.body[0].text, 'Housing');
+                    assert.equal(res.body[0].delete_password, 'password');
+                    thread_id = res.body[0]._id;
                     thread_id2 = res.body[1]._id;
-
-                    assert.property(res.body[1], 'board');
-                    assert.property(res.body[1], 'text');
-                    assert.property(res.body[1], 'delete_password');
-                    assert.property(res.body[1], 'created_on');
-                    assert.property(res.body[1], 'bumped_on');
-
-                    assert.equal(res.body[1].reported, false);
-                    assert.isArray(res.body[1].replies);
-                    assert.equal(res.body[1].replycount, 0);
-                    assert.equal(res.body[1].board, 'Mark')
-                    assert.equal(res.body[1].text, 'Housing')
-                    assert.equal(res.body[1].delete_password, 'password')
                     done();                   
                 });
         })
@@ -128,7 +85,7 @@ suite('Functional Tests', function() {
       
       test('Update with an invalid id', function(done){
         chai.request(server)
-            .put('/api/threads/Mark')
+            .put('/api/threads/textBoard')
             .send({ thread_id: 'wrong-thread-id' })
             .end((err, res) => {
                 assert.equal(res.status, 200);
@@ -137,20 +94,9 @@ suite('Functional Tests', function() {
             });
       });
 
-      test('Update with a wrong-board-name', function(done){
-        chai.request(server)
-            .put('/api/threads/wrong-board-name')
-            .send({ thread_id })
-            .end((err, res) => {
-                assert.equal(res.status, 200);
-                assert.equal(res.text, 'wrong board name');
-                done();
-            });
-      });
-
       test('Update with the correct inputs', function(done){
         chai.request(server)
-            .put('/api/threads/Mark')
+            .put('/api/threads/testBoard')
             .send({ thread_id })
             .end((err, res) => {
                 assert.equal(res.status, 200);
@@ -165,7 +111,7 @@ suite('Functional Tests', function() {
 
         test('Delete a thread with wrong-id', function(done) {
             chai.request(server)
-                .delete('/api/threads/Mark')
+                .delete('/api/threads/testBoard')
                 .send({
                     thread_id : '89403884i30f',
                     delete_password: 'password'
@@ -177,24 +123,9 @@ suite('Functional Tests', function() {
                 });
         })
 
-
-        test('Delete a thread with wrong-board-name', function(done) {
-            chai.request(server)
-                .delete('/api/threads/wrong-board-name')
-                .send({
-                    thread_id : thread_id,
-                    delete_password: 'password'
-                })
-                .end((err, res) => {
-                    assert.equal(res.status, 200);
-                    assert.equal(res.text, 'wrong board name');
-                    done();
-                });
-        });
-
         test('Delete a thread with the wrong-password', function(done) {
             chai.request(server)
-                .delete('/api/threads/Mark')
+                .delete('/api/threads/testBoard')
                 .send({
                     thread_id : thread_id,
                     delete_password: 'wrong-password'
@@ -208,7 +139,7 @@ suite('Functional Tests', function() {
 
         test('Delete a thread with the correct inputs', function(done) {
             chai.request(server)
-                .delete('/api/threads/Mark')
+                .delete('/api/threads/testBoard')
                 .send({
                     thread_id : thread_id,
                     delete_password: 'password'
@@ -230,11 +161,10 @@ suite('Functional Tests', function() {
 
     suite('POST', function() {
         
-        test('Post replies with wrong-thread-id', function(){
+        test('Post replies with wrong-thread-id', function(done){
             chai.request(server)
-                .post('/api/replies/Mark')
+                .post('/api/replies/testBoard')
                 .send({
-                    board: 'Mark',
                     thread_id: 'wrong-thread-id',
                     text: 'Are you an agent? cos I will like to buy a new house.',
                     delete_password: 'password'
@@ -246,27 +176,10 @@ suite('Functional Tests', function() {
                 });
         });
 
-        test('Post replies with the wrong-board-name', function(){
-            chai.request(server)
-                .post('/api/replies/Mark')
-                .send({
-                    board: 'Mark',
-                    thread_id: 'wrong-thread-id',
-                    text: 'Are you an agent? cos I will like to buy a new house.',
-                    delete_password: 'password'
-                })
-                .end((err, res) => {
-                    assert.equal(res.status, 200);
-                    assert.equal(res.text, 'wrong board name');
-                    done();
-                });
-        });
-
         test('Post replies with the correct inputs', function(done){
             chai.request(server)
-                .post('/api/replies/Mark')
+                .post('/api/replies/testBoard')
                 .send({
-                    board: 'Mark',
                     thread_id: thread_id2,
                     text: 'Are you an agent? cos I will like to buy a new house.',
                     delete_password: 'password'
@@ -292,38 +205,23 @@ suite('Functional Tests', function() {
                 });
         });
 
-        test('Get replies with wrong-board-name', function(done){
-            chai.request(server)
-                .get('/api/replies/wrong-board-name')
-                .query({ thread_id:  thread_id2 })
-                .end((err, res) => {
-                    assert.equal(res.status, 200);
-                    assert.equal(res.text, 'wrong board name');
-                    done()
-                });
-        });
-
         test('Get replies with the correct inputs', function(done){
             chai.request(server)
-                .get('/api/replies/Mark')
+                .get('/api/replies/testBoard')
                 .query({ thread_id: thread_id2 })
                 .end((err, res) => {
                     assert.equal(res.status, 200);
-                    assert.equal(res.body.reported, false);
+                    assert.isBoolean(res.body.reported);
                     assert.isArray(res.body.replies);
                     assert.isNumber(res.body.replycount);
-                    assert.equal(res.body.board, 'Mark');
                     assert.isString(res.body.text);
                     assert.isString(res.body.delete_password);
-
-                    reply_id = res.body.replies[0]._id;
-
                     assert.property(res.body.replies[0], 'reported');
                     assert.property(res.body.replies[0], '_id')
-                    assert.property(res.body.replies[0], 'board');
                     assert.property(res.body.replies[0], 'text');
                     assert.property(res.body.replies[0], 'delete_password');
                     assert.property(res.body.replies[0], 'created_on');
+                    reply_id = res.body.replies[0]._id;
                     done();                   
                 });
         });
@@ -333,7 +231,7 @@ suite('Functional Tests', function() {
 
         test('Update replies with wrong-thread-id', function(done){
             chai.request(server)
-                .put('/api/replies/Mark')
+                .put('/api/replies/testBoard')
                 .send({
                     thread_id: 'wrong-thread-id',
                     reply_id: reply_id
@@ -345,23 +243,9 @@ suite('Functional Tests', function() {
                 })          
         })
 
-        test('Update replies with wrong-board-name', function(done){
-            chai.request(server)
-                .put('/api/replies/wrong-board-name')
-                .send({
-                    thread_id: thread_id2,
-                    reply_id: reply_id
-                })
-                .end((err, res) => {
-                    assert.equal(res.status, 200);
-                    assert.equal(res.text, 'wrong board name');
-                    done();
-                })          
-        })
-
         test('Update replies with the correct inputs', function(done){
             chai.request(server)
-                .put('/api/replies/Mark')
+                .put('/api/replies/testBoard')
                 .send({
                     thread_id: thread_id2,
                     reply_id: reply_id
@@ -378,7 +262,7 @@ suite('Functional Tests', function() {
 
         test('Delete replies with wrong-thread-id', function(done){
             chai.request(server)
-                .delete('/api/replies/Mark')
+                .delete('/api/replies/testBoard')
                 .send({
                     thread_id: 'wrong-thread-id',
                     reply_id: reply_id,
@@ -391,24 +275,9 @@ suite('Functional Tests', function() {
                 });
         })
 
-        test('Delete replies with wrong-board-name', function(done){
-            chai.request(server)
-                .delete('/api/replies/wrong-board-name')
-                .send({
-                    thread_id: thread_id2,
-                    reply_id: reply_id,
-                    delete_password: 'password'
-                })
-                .end((err, res) => {
-                    assert.equal(res.status, 200);
-                    assert.equal(res.text, 'wrong board name');
-                    done();
-                });
-        })
-
         test('Delete replies with incorrect-password', function(done){
             chai.request(server)
-                .delete('/api/replies/Mark')
+                .delete('/api/replies/testBoard')
                 .send({
                     thread_id: thread_id2,
                     reply_id: reply_id,
@@ -423,7 +292,7 @@ suite('Functional Tests', function() {
 
         test('Delete replies with the correct inputs', function(done){
             chai.request(server)
-                .delete('/api/replies/Mark')
+                .delete('/api/replies/testBoard')
                 .send({
                     thread_id: thread_id2,
                     reply_id: reply_id,
